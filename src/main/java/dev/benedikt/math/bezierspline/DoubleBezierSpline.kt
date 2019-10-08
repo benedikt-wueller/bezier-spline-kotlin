@@ -5,23 +5,46 @@ import dev.benedikt.math.bezierspline.vector.VectorD
 class DoubleBezierSpline<V : VectorD<V>>(val closed: Boolean = false) {
 
     private val knots = mutableListOf<V>()
-    var controlPoints = listOf<Pair<V, V>>()
+    private var controlPoints = listOf<Pair<V, V>>()
 
     companion object {
-        const val MIN_WEIGHT = 0.001
+        const val MIN_WEIGHT = 1.0
     }
 
     fun addKnots(vararg knots: V) {
         this.knots.addAll(knots)
-        this.calculate()
+        this.update()
     }
 
     fun removeKnots(vararg knots: V) {
         this.knots.removeAll(knots)
-        this.calculate()
+        this.update()
     }
 
-    private fun calculate() {
+    fun toPath() : String {
+        var path = "M${this.knots.first()}"
+
+        if (this.closed) {
+            for (i in 0 until this.knots.size) {
+                val prevKnot = if (i == 0) this.knots.last() else this.knots[i - 1]
+                val controlPoints = if (i == 0) this.controlPoints.last() else this.controlPoints[i - 1]
+
+                val knot = this.knots[i]
+
+                path += " M$prevKnot C${controlPoints.first} ${controlPoints.second} $knot"
+            }
+        } else {
+            for (i in 1 until this.knots.size) {
+                val knot = this.knots[i]
+                val controlPoints = this.controlPoints[i - 1]
+                path += " M${this.knots[i - 1]} C${controlPoints.first} ${controlPoints.second} $knot"
+            }
+        }
+
+        return path
+    }
+
+    private fun update() {
         // We need at least two nodes for a path to be generated.
         if (this.knots.size < 2) {
             // Make sure no control points are set from previous calculations.
@@ -50,7 +73,7 @@ class DoubleBezierSpline<V : VectorD<V>>(val closed: Boolean = false) {
 
         // If the spline is closed, we need an additional weight between the first and last knot.
         if (this.closed) {
-            val distance = this.knots[0].distanceTo(this.knots[this.knots.size - 1])
+            val distance = this.knots.first().distanceTo(this.knots.last())
             weights.add(Math.max(distance, MIN_WEIGHT))
         }
 
@@ -59,15 +82,15 @@ class DoubleBezierSpline<V : VectorD<V>>(val closed: Boolean = false) {
 
     private fun computeClosedControlPoints(initialWeights: List<Double>): List<Pair<V, V>> {
         val weights = initialWeights.toMutableList()
-        weights.add(weights.first())
 
         val matrix = MatrixD<V>()
 
         for (i in 0 until this.knots.size) { // 1 to knots.size inclusive
-            val fraction = weights[i] / weights[i + 1]
-
+            val nextWeight = if (i == this.knots.lastIndex) weights.first() else weights[i + 1]
             val prevWeight = if (i == 0) weights.last() else weights[i - 1]
             val nextKnot = if (i == this.knots.lastIndex) this.knots.first() else this.knots[i + 1]
+
+            val fraction = weights[i] / nextWeight
 
             matrix.set(Math.pow(weights[i], 2.0),
                     2.0 * prevWeight * (prevWeight + weights[i]),
@@ -75,17 +98,17 @@ class DoubleBezierSpline<V : VectorD<V>>(val closed: Boolean = false) {
                     this.knots[i] * Math.pow(prevWeight + weights[i], 2.0) + nextKnot * Math.pow(prevWeight, 2.0) * (1 + fraction))
         }
 
-        val controlPoints = matrix.solveThomasClosed().toMutableList()
-        controlPoints.add(controlPoints.first())
+        val firstControlPoints = matrix.solveThomasClosed().toMutableList()
+        firstControlPoints.add(firstControlPoints.first())
 
-        // Calculate and return the seconds set of control points using the first control points.
-        return (0 until this.knots.lastIndex).map { i ->
-            val fraction = weights[i] / weights[i + 1]
+        return (0 until this.knots.size).map { i ->
+            val nextKnot = if (i == this.knots.lastIndex) this.knots.first() else this.knots[i + 1]
+            val nextWeight = if (i == this.knots.lastIndex) weights.first() else weights[i + 1]
 
-            val p1 = controlPoints[i + 1]
-            val p2 = this.knots[i + 1] * (1 + fraction) - p1 * fraction
+            val fraction = weights[i] / nextWeight
 
-            return@map Pair(p1, p2)
+            val p2 = nextKnot * (1 + fraction) - firstControlPoints[i + 1] * fraction
+            return@map Pair(firstControlPoints[i], p2)
         }
     }
 

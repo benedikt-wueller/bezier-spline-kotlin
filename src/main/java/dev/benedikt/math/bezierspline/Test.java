@@ -13,12 +13,12 @@ public class Test {
         DoubleBezierSpline<Vector2D> spline = new DoubleBezierSpline<>(false);
 
         spline.addKnots(
-                new Vector2D(100, 100),
-                new Vector2D(200, 200),
-                new Vector2D(100, 300),
-                new Vector2D(500, 400)
+                new Vector2D(60, 60),
+                new Vector2D(700, 240),
+                new Vector2D(600, 100),
+                new Vector2D(330, 390)
         );
 
-        System.out.println(spline.getControlPoints());
+        System.out.println(spline.toPath());
     }
 }

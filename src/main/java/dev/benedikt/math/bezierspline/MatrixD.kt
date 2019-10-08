@@ -4,10 +4,10 @@ import dev.benedikt.math.bezierspline.vector.VectorD
 
 class MatrixD<V : VectorD<V>> {
 
-    private val a = mutableListOf<Double>()
-    private val b = mutableListOf<Double>()
-    private val c = mutableListOf<Double>()
-    private val r = mutableListOf<V>()
+    val a = mutableListOf<Double>()
+    val b = mutableListOf<Double>()
+    val c = mutableListOf<Double>()
+    val r = mutableListOf<V>()
 
     fun set(a: Double, b: Double, c: Double, r: V) {
         this.a.add(a)
@@ -49,7 +49,8 @@ class MatrixD<V : VectorD<V>> {
         for (i in 0 until size - 1) {
             var m = a[i + 1] / b[i]
             b[i + 1] -= c[i] * m
-            r[i + 1] -= r[i] * m
+
+            r[i + 1] = r[i + 1] - r[i] * m
 
             if (i > size - 3) continue
 
@@ -65,7 +66,7 @@ class MatrixD<V : VectorD<V>> {
             if (i < size - 3) {
                 lastRow = c[i] * -m
             } else { // i = n-3
-                a[a.lastIndex - 1] -= c[i] * m
+                a[a.lastIndex] -= c[i] * m
             }
 
             r[r.lastIndex] -= r[i] * m
@@ -75,8 +76,10 @@ class MatrixD<V : VectorD<V>> {
         result.add(r.last() / b.last())
 
         lastColumn.add(0.0)
+
         for (i in 1 until size) {
-            result.add(((r[i] - c[i]) * result[i - 1] - result[0] * lastColumn[size - 1 - i]) / b[i])
+            val realIndex = size - 1 - i
+            result.add((r[realIndex] - result[i - 1] * c[realIndex] - result[0] * lastColumn[realIndex]) / b[realIndex])
         }
 
         return result.reversed()
