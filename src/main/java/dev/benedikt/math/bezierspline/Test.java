@@ -2,23 +2,16 @@ package dev.benedikt.math.bezierspline;
 
 import dev.benedikt.math.bezierspline.vector.Vector2D;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Test {
 
-    private List<String> list = new ArrayList<>();
-
     public static void main(String[] args) {
-        DoubleBezierSpline<Vector2D> spline = new DoubleBezierSpline<>(false);
+        DoubleBezierSpline<Vector2D> spline = new DoubleBezierSpline<>(true);
 
         spline.addKnots(
-                new Vector2D(60, 60),
-                new Vector2D(700, 240),
-                new Vector2D(600, 100),
-                new Vector2D(330, 390)
+                new Vector2D(0.06, 0.06),
+                new Vector2D(0.7, 0.24),
+                new Vector2D(0.6, 0.1),
+                new Vector2D(0.33, 0.39)
         );
-
-        System.out.println(spline.toPath());
     }
 }

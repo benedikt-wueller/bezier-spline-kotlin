@@ -9,5 +9,8 @@
         <module name="bezier-spline" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="bezier-spline" target="8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

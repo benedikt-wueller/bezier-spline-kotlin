@@ -21,29 +21,6 @@ class DoubleBezierSpline<V : VectorD<V>>(val closed: Boolean = false) {
         this.update()
     }
 
-    fun toPath() : String {
-        var path = "M${this.knots.first()}"
-
-        if (this.closed) {
-            for (i in 0 until this.knots.size) {
-                val prevKnot = if (i == 0) this.knots.last() else this.knots[i - 1]
-                val controlPoints = if (i == 0) this.controlPoints.last() else this.controlPoints[i - 1]
-
-                val knot = this.knots[i]
-
-                path += " M$prevKnot C${controlPoints.first} ${controlPoints.second} $knot"
-            }
-        } else {
-            for (i in 1 until this.knots.size) {
-                val knot = this.knots[i]
-                val controlPoints = this.controlPoints[i - 1]
-                path += " M${this.knots[i - 1]} C${controlPoints.first} ${controlPoints.second} $knot"
-            }
-        }
-
-        return path
-    }
-
     private fun update() {
         // We need at least two nodes for a path to be generated.
         if (this.knots.size < 2) {
@@ -98,8 +75,8 @@ class DoubleBezierSpline<V : VectorD<V>>(val closed: Boolean = false) {
                     this.knots[i] * Math.pow(prevWeight + weights[i], 2.0) + nextKnot * Math.pow(prevWeight, 2.0) * (1 + fraction))
         }
 
-        val firstControlPoints = matrix.solveThomasClosed().toMutableList()
-        firstControlPoints.add(firstControlPoints.first())
+        val controlPoints = matrix.solveThomasClosed().toMutableList()
+        controlPoints.add(controlPoints.first())
 
         return (0 until this.knots.size).map { i ->
             val nextKnot = if (i == this.knots.lastIndex) this.knots.first() else this.knots[i + 1]
@@ -107,8 +84,8 @@ class DoubleBezierSpline<V : VectorD<V>>(val closed: Boolean = false) {
 
             val fraction = weights[i] / nextWeight
 
-            val p2 = nextKnot * (1 + fraction) - firstControlPoints[i + 1] * fraction
-            return@map Pair(firstControlPoints[i], p2)
+            val p2 = nextKnot * (1 + fraction) - controlPoints[i + 1] * fraction
+            return@map Pair(controlPoints[i], p2)
         }
     }
 
@@ -140,14 +117,10 @@ class DoubleBezierSpline<V : VectorD<V>>(val closed: Boolean = false) {
         // Calculate the first set of control points.
         val controlPoints = matrix.solveThomas()
 
-        // Calculate and return the seconds set of control points using the first control points.
         return (0 until this.knots.lastIndex).map { i ->
             val fraction = weights[i] / weights[i + 1]
-
-            val p1 = controlPoints[i + 1]
-            val p2 = this.knots[i + 1] * (1 + fraction) - p1 * fraction
-
-            return@map Pair(p1, p2)
+            val p2 = this.knots[i + 1] * (1 + fraction) - controlPoints[i + 1] * fraction
+            return@map Pair(controlPoints[i], p2)
         }
     }
 
