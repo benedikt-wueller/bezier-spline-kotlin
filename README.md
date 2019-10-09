@@ -30,7 +30,7 @@ In this example, a Bezier Spline for the number type `Float` is implemented.
 First you will have to crate a custom `Vector` implementation. Based on the current naming scheme, this would be a
 `Vector3F` where the `3` indicates the number of dimensions and `F` is the shorthand for the data type.
 
-**Note**: You should create a generic `VectorF` interface first which is then extended by `Vector3F to allow full
+**Note**: You should create a generic `VectorF` interface first which is then extended by `Vector3F` to allow full
 generic use of the bezier spline.
 
 ```kotlin
