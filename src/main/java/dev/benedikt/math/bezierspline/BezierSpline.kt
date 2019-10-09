@@ -5,8 +5,8 @@ import dev.benedikt.math.bezierspline.vector.Vector
 
 abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = false) {
 
-    protected abstract val zero : N
-    protected abstract val one : N
+    protected abstract val zero: N
+    protected abstract val one: N
 
     private val two = this.plus(this.one, this.one)
     private val three = this.plus(this.one, this.two)

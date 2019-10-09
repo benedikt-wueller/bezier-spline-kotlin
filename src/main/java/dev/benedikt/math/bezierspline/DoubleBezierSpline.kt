@@ -18,5 +18,5 @@ class DoubleBezierSpline<V : VectorD<V>> @JvmOverloads constructor(closed: Boole
     override fun div(a: Double, b: Double) = a / b
 
     override fun max(a: Double, b: Double) = kotlin.math.max(a, b)
-    override fun square(n: Double) = n.pow(2.0)
+    override fun square(n: Double) = n.pow(2)
 }

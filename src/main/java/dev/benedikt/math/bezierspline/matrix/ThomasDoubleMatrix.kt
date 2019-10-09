@@ -4,73 +4,13 @@ import dev.benedikt.math.bezierspline.vector.VectorD
 
 class ThomasDoubleMatrix<V : VectorD<V>> : ThomasMatrix<Double, V>() {
 
-    override fun solveThomas() : List<V> {
-        val b = this.b.toMutableList()
-        val r = this.r.toMutableList()
+    override val zero = 0.0
 
-        for (i in 1 until r.size) {
-            val m = this.a[i] / b[i - 1]
-            b[i] = b[i] - this.c[i - 1] * m
-            r[i] = r[i] - r[i - 1] * m
-        }
+    override fun plus(a: Double, b: Double) = a + b
+    override fun minus(a: Double, b: Double) = a - b
+    override fun times(a: Double, b: Double) = a * b
+    override fun div(a: Double, b: Double) = a / b
 
-        val size = r.size
-        val result = mutableListOf<V>()
-        result.add(r.last() / b.last())
-        for (i in 1 until size) {
-            val realIndex = size - 1 - i
-            result.add((r[realIndex] - result[i - 1] * c[realIndex]) / b[realIndex])
-        }
+    override fun negate(n: Double) = -n
 
-        return result.reversed()
-    }
-
-    override fun solveThomasClosed() : List<V> {
-        val a = this.a.toMutableList()
-        val b = this.b.toMutableList()
-        val c = this.c.toMutableList()
-        val r = this.r.toMutableList()
-
-        val size = r.size
-
-        val lastColumn = mutableListOf(a.first())
-        var lastRow = c[c.lastIndex]
-
-        for (i in 0 until size - 1) {
-            var m = a[i + 1] / b[i]
-            b[i + 1] -= c[i] * m
-            r[i + 1] = r[i + 1] - r[i] * m
-
-            if (i > size - 3) continue
-
-            if (i < size - 3) {
-                lastColumn.add(lastColumn[i] * -m)
-            } else { // i = n-3
-                c[i + 1] -= lastColumn[i] * m
-            }
-
-            m = lastRow / b[i]
-            b[b.lastIndex] -= lastColumn[i] * m
-
-            if (i < size - 3) {
-                lastRow = c[i] * -m
-            } else { // i = n-3
-                a[a.lastIndex] -= c[i] * m
-            }
-
-            r[r.lastIndex] -= r[i] * m
-        }
-
-        lastColumn.add(0.0)
-
-        val result = mutableListOf<V>()
-        result.add(r.last() / b.last())
-
-        for (i in 1 until size) {
-            val realIndex = size - 1 - i
-            result.add((r[realIndex] - result[i - 1] * c[realIndex] - result[0] * lastColumn[realIndex]) / b[realIndex])
-        }
-
-        return result.reversed()
-    }
 }
