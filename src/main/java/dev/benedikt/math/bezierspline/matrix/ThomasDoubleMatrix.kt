@@ -1,22 +1,10 @@
-package dev.benedikt.math.bezierspline
+package dev.benedikt.math.bezierspline.matrix
 
 import dev.benedikt.math.bezierspline.vector.VectorD
 
-class MatrixD<V : VectorD<V>> {
+class ThomasDoubleMatrix<V : VectorD<V>> : ThomasMatrix<Double, V>() {
 
-    private val a = mutableListOf<Double>()
-    private val b = mutableListOf<Double>()
-    private val c = mutableListOf<Double>()
-    private val r = mutableListOf<V>()
-
-    fun set(a: Double, b: Double, c: Double, r: V) {
-        this.a.add(a)
-        this.b.add(b)
-        this.c.add(c)
-        this.r.add(r)
-    }
-
-    fun solveThomas() : List<V> {
+    override fun solveThomas() : List<V> {
         val b = this.b.toMutableList()
         val r = this.r.toMutableList()
 
@@ -37,7 +25,7 @@ class MatrixD<V : VectorD<V>> {
         return result.reversed()
     }
 
-    fun solveThomasClosed() : List<V> {
+    override fun solveThomasClosed() : List<V> {
         val a = this.a.toMutableList()
         val b = this.b.toMutableList()
         val c = this.c.toMutableList()

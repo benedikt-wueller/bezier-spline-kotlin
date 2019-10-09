@@ -1,5 +1,8 @@
 package dev.benedikt.math.bezierspline.vector
 
+import kotlin.math.pow
+import kotlin.math.sqrt
+
 class Vector2D(var x: Double = 0.0, var y: Double = 0.0) : VectorD<Vector2D>() {
 
     override operator fun plus(other: Vector2D) = Vector2D(this.x + other.x, this.y + other.y)
@@ -14,9 +17,6 @@ class Vector2D(var x: Double = 0.0, var y: Double = 0.0) : VectorD<Vector2D>() {
     override operator fun div(other: Vector2D) = Vector2D(this.x / other.x, this.y / other.y)
     override operator fun div(value: Double) = Vector2D(this.x / value, this.y / value)
 
-    override fun distanceTo(other: Vector2D) = Math.sqrt(Math.pow(this.x - other.x, 2.0) + Math.pow(this.y - other.y, 2.0))
+    override fun distanceTo(other: Vector2D) = sqrt((this.x - other.x).pow(2.0) + (this.y - other.y).pow(2.0))
 
-    override fun toString(): String {
-        return "${this.x},${this.y}"
-    }
 }
