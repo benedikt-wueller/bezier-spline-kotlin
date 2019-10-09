@@ -3,7 +3,7 @@ kotlin-bezier-spline
 
 A generic bezier spline implementation for Kotlin and Java [WIP].
 
-**Note**: currently only the computation if control points is implemented.
+**Note**: currently only the computation of control points is implemented.
 
 Example
 -------
