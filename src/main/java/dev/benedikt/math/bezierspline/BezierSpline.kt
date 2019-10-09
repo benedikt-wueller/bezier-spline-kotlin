@@ -26,6 +26,76 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
         this.update()
     }
 
+    fun getLength(resolution: N) : N {
+        var length = this.zero
+
+        for (i in 0 until this.knots.size - 1) {
+            length = this.plus(length, this.getSegmentLength(i, resolution))
+        }
+
+        return length
+    }
+
+    fun getSegmentLength(segment: Int, resolution: N) : N {
+        val start = this.knots[segment]
+
+        var length = this.zero
+        val sections = this.round(this.div(this.one, resolution))
+
+        for (i in 1..sections) {
+            val sectionLength = start.distanceTo(this.getSegmentCoordinatesAt(segment, this.times(resolution, i)))
+            if (this.isSmallerThan(resolution, sectionLength)) {
+                // Half the resolution and try again.
+                return this.getSegmentLength(segment, this.div(resolution, 2))
+            }
+
+            length = this.plus(length, sectionLength)
+        }
+
+        return length
+    }
+
+    fun getCoordinatesAt(t: N, resolution: N) : V? {
+        var totalLength = this.zero
+        val lengths = mutableListOf<N>()
+
+        for (i in 0 until this.knots.size - 1) {
+            val length = this.getSegmentLength(i, resolution)
+            lengths.add(length)
+            totalLength = this.plus(totalLength, length)
+        }
+
+        // Find the segment.
+        var currentLength = this.zero
+
+        for (i in 0 until this.knots.size - 1) {
+            val length = lengths[i]
+            val total = this.plus(currentLength, length)
+
+            if (this.isBetween(t, currentLength, total)) {
+                return this.getSegmentCoordinatesAt(i, this.div(this.minus(t, currentLength), length))
+            }
+
+            currentLength = total
+        }
+
+        return null
+    }
+
+    fun getSegmentCoordinatesAt(segment: Int, t: N) : V {
+        val start = this.knots[segment]
+        val end = this.knots[segment + 1]
+        val (c1, c2) = this.controlPoints[segment]
+
+        val delta = this.minus(this.one, t)
+
+        // See https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves
+        return start * this.pow(delta, this.three) +
+                c1 * this.times(delta, this.times(this.three, this.square(delta))) +
+                c2 * this.times(this.square(delta), this.times(this.three, delta)) +
+                end * this.pow(delta, this.three)
+    }
+
     private fun update() {
         this.controlPoints.clear()
 
@@ -86,6 +156,8 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
             }
         }
 
+        weights.add(weights.last())
+
         // First segment
         matrix.set(this.zero, this.two, this.div(weights[0], weights[1]), this.knots[0] + this.knots[1] * this.plus(this.one, this.div(weights[0], weights[1])))
 
@@ -113,6 +185,20 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
 
     protected abstract fun createMatrix() : ThomasMatrix<N, V>
 
+    /**
+     * Equivalent of b <= a && a <= c.
+     *
+     * @return whether a is between b and c.
+     */
+    protected abstract fun isBetween(a: N, b: N, c: N) : Boolean
+
+    /**
+     * Equivalent of a < b
+     *
+     * @return whether a is smaller than b.
+     */
+    protected abstract fun isSmallerThan(a: N, b: N) : Boolean
+
     //
     // Math helpers for generic types
     //
@@ -120,7 +206,11 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
     protected abstract fun plus(a: N, b: N) : N
     protected abstract fun minus(a: N, b: N) : N
     protected abstract fun times(a: N, b: N) : N
+    protected abstract fun times(a: N, b: Int) : N
     protected abstract fun div(a: N, b: N) : N
+    protected abstract fun div(a: N, b: Int) : N
+
+    private fun square(n: N) = this.times(n, n)
 
     /**
      * Equivalent of Math.max(a, b).
@@ -130,10 +220,11 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
     protected abstract fun max(a: N, b: N) : N
 
     /**
-     * Equivalent of Math.pow(n, 2).
+     * Equivalent of Math.pow(n, p).
      *
-     * @param n the number to square.
      * @return the squared number.
      */
-    protected abstract fun square(n: N) : N
+    protected abstract fun pow(n: N, p: N) : N
+
+    protected abstract fun round(n: N) : Int
 }

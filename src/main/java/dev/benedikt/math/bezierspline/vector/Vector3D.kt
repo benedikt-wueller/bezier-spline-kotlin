@@ -19,4 +19,7 @@ class Vector3D(var x: Double = 0.0, var y: Double = 0.0, var z: Double = 0.0) : 
 
     override fun distanceTo(other: Vector3D) = sqrt((this.x - other.x).pow(2) + (this.y - other.y).pow(2) + (this.z - other.z).pow(2))
 
+    override fun toString(): String {
+        return "($x,$y,$z)"
+    }
 }

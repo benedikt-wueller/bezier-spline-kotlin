@@ -1,7 +1,7 @@
 kotlin-bezier-spline
 ====================
 
-A generic bezier spline implementation for Kotlin and Java.
+A generic cubic bezier spline implementation for Kotlin and Java.
 
 Example
 -------
@@ -87,7 +87,7 @@ class FloatBezierSpline<V : VectorF<V>> @JvmOverloads constructor(closed: Boolea
     override fun div(a: Float, b: Float) = a / b
 
     override fun max(a: Float, b: Float) = kotlin.math.max(a, b)
-    override fun square(n: Float) = n.pow(2)
+    override fun pow(n: Float, p: Float) = n.pow(p)
 }
 ```
 
