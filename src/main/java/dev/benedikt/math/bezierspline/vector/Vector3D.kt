@@ -3,7 +3,7 @@ package dev.benedikt.math.bezierspline.vector
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class Vector3D(var x: Double = 0.0, var y: Double = 0.0, var z: Double = 0.0) : VectorD<Vector3D>() {
+class Vector3D(var x: Double = 0.0, var y: Double = 0.0, var z: Double = 0.0) : VectorD<Vector3D> {
 
     override operator fun plus(other: Vector3D) = Vector3D(this.x + other.x, this.y + other.y, this.z + other.z)
     override operator fun plus(value: Double) = Vector3D(this.x + value, this.y + value, this.z + value)
