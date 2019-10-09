@@ -1,7 +1,9 @@
 kotlin-bezier-spline
 ====================
 
-A generic bezier spline implementation for Kotlin and Java.
+A generic bezier spline implementation for Kotlin and Java [WIP].
+
+**Note**: currently only the computation if control points is implemented.
 
 Example
 -------
