@@ -1,4 +1,4 @@
-package dev.benedikt.math.bezierspline.vector
+package dev.benedikt.math.bezier.vector
 
 interface Vector<N : Number, V : Vector<N, V>> {
 
@@ -22,10 +22,7 @@ interface Vector<N : Number, V : Vector<N, V>> {
      */
     fun distanceTo(other: V) : N
 
-    /**
-     * Creates and returns a copy of this vector.
-     *
-     * @return the new vector.
-     */
-    fun copy() : V
+    fun magnitude() : N
+
+    fun normalized() = this / this.magnitude()
 }

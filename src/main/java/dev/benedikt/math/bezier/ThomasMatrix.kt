@@ -1,15 +1,14 @@
-package dev.benedikt.math.bezierspline.matrix
+package dev.benedikt.math.bezier
 
-import dev.benedikt.math.bezierspline.vector.Vector
+import dev.benedikt.math.bezier.math.NumberHelper
+import dev.benedikt.math.bezier.vector.Vector
 
-abstract class ThomasMatrix<N : Number, V : Vector<N, V>> {
+class ThomasMatrix<N : Number, V : Vector<N, V>>(private val helper: NumberHelper<N>) {
 
-    protected abstract val zero: N
-
-    protected val a = mutableListOf<N>()
-    protected val b = mutableListOf<N>()
-    protected val c = mutableListOf<N>()
-    protected val r = mutableListOf<V>()
+    private val a = mutableListOf<N>()
+    private val b = mutableListOf<N>()
+    private val c = mutableListOf<N>()
+    private val r = mutableListOf<V>()
 
     fun set(a: N, b: N, c: N, r: V) {
         this.a.add(a)
@@ -18,7 +17,7 @@ abstract class ThomasMatrix<N : Number, V : Vector<N, V>> {
         this.r.add(r)
     }
 
-    fun solveThomas() : List<V> {
+    fun solve() : List<V> {
         val b = this.b.toMutableList()
         val r = this.r.toMutableList()
 
@@ -39,7 +38,7 @@ abstract class ThomasMatrix<N : Number, V : Vector<N, V>> {
         return result.reversed()
     }
 
-    fun solveThomasClosed() : List<V> {
+    fun solveClosed() : List<V> {
         val a = this.a.toMutableList()
         val b = this.b.toMutableList()
         val c = this.c.toMutableList()
@@ -75,7 +74,7 @@ abstract class ThomasMatrix<N : Number, V : Vector<N, V>> {
             r[r.lastIndex] -= r[i] * m
         }
 
-        lastColumn.add(this.zero)
+        lastColumn.add(this.helper.zero)
 
         val result = mutableListOf<V>()
         result.add(r.last() / b.last())
@@ -89,19 +88,11 @@ abstract class ThomasMatrix<N : Number, V : Vector<N, V>> {
     }
 
     //
-    // Math helpers for generic types
+    // Math helpers for readability
     //
 
-    abstract fun plus(a: N, b: N) : N
-    abstract fun minus(a: N, b: N) : N
-    abstract fun times(a: N, b: N) : N
-    abstract fun div(a: N, b: N) : N
-
-    /**
-     * Equivalent of -1 * n.
-     *
-     * @param n the number to negate.
-     * @return the negated number.
-     */
-    abstract fun negate(n: N) : N
+    private fun minus(a: N, b: N) = this.helper.minus(a, b)
+    private fun times(a: N, b: N) = this.helper.times(a, b)
+    private fun div(a: N, b: N) = this.helper.div(a, b)
+    private fun negate(n: N) = this.helper.negate(n)
 }
