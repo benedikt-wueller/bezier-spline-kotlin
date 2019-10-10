@@ -71,7 +71,7 @@ implementation. This example is illustrated by the implementation of the `FloatB
 **Note**: The examples are written in Kotlin, because this is the original code. Obviously, everything can be
 implemented using Java as well.
 
-First you need to create a implementation of `NumberHelper` for your number type. This class is used to provide the
+First you need to create an implementation of `NumberHelper` for your number type. This class is used to provide the
 required mathematical functions for generic number calculations.
 
 ```kotlin
