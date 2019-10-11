@@ -1,7 +1,7 @@
 package dev.benedikt.math.bezier.math
 
 /**
- * This is a helper class to allow for generic maths in the bezier splines and thomas matrices.
+ * A helper class to allow for generic maths in the bezier splines and thomas matrices.
  */
 abstract class NumberHelper<N : Number> {
 

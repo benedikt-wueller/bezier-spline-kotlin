@@ -3,6 +3,10 @@ package dev.benedikt.math.bezier
 import dev.benedikt.math.bezier.math.NumberHelper
 import dev.benedikt.math.bezier.vector.Vector
 
+/**
+ * A Matrix using the Thomas algorithm to calculate the control points of the individual bezier curves creating the
+ * bezier spline.
+ */
 class ThomasMatrix<N : Number, V : Vector<N, V>>(private val helper: NumberHelper<N>) {
 
     private val a = mutableListOf<N>()

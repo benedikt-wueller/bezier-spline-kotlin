@@ -1,5 +1,10 @@
 package dev.benedikt.math.bezier
 
+/**
+ * This object provides some pre-defined resolution constants which can be used to adjust the speed and accuracy of
+ * the length estimation. The more extreme some sections of the spline are, the finer the resolution has to be in order
+ * to provide a reliable estimation.
+ */
 object Resolution {
 
     const val ROUGHEST = 100
