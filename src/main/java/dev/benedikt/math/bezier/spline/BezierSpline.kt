@@ -8,7 +8,7 @@ import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import java.lang.IndexOutOfBoundsException
 
-abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = false, val resolution: Int = Resolution.BALANCED) {
+abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = false, val resolution: Int = Resolution.DEFAULT) {
 
     protected abstract val numberHelper: NumberHelper<N>
     protected abstract val minWeight: N
