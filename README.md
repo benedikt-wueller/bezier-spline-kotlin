@@ -1,7 +1,7 @@
-kotlin-bezier-spline
+bezier-spline-kotlin
 ====================
 
-A generic cubic bezier spline implementation for Kotlin and Java [WIP].
+A generic cubic bezier spline implementation for Java/Kotlin.
 
 Getting Started
 ---------------
