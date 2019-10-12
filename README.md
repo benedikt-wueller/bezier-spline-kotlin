@@ -6,7 +6,13 @@ A generic cubic bezier spline implementation for Java/Kotlin.
 Installation
 ------------
 
-TODO
+```xml
+<dependency>
+  <groupId>dev.benedikt.math</groupId>
+  <artifactId>bezier-spline</artifactId>
+  <version>1.0</version>
+</dependency>
+```
 
 Usage
 -----
@@ -24,6 +30,7 @@ spline.addKnot(new Vector3D(0.7, 0.24, 0.5));
 spline.addKnot(new Vector3D(0.6, 0.1, 0.35));
 spline.addKnot(new Vector3D(0.33, 0.39, 0.4));
 
+double length = spline.getLength();
 Vector3D coordinates = spline.getCoordinatesAt(0.5);
 Vector3D tangent = spline.getTangentAt(0.5);
 ```
