@@ -1,12 +1,12 @@
 package dev.benedikt.math.bezier.spline
 
 import dev.benedikt.math.bezier.Resolution
+import dev.benedikt.math.bezier.SegmentIndexOutOfBoundsException
 import dev.benedikt.math.bezier.ThomasMatrix
 import dev.benedikt.math.bezier.math.NumberHelper
 import dev.benedikt.math.bezier.vector.Vector
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
-import java.lang.IndexOutOfBoundsException
 
 abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = false, val resolution: Int = Resolution.DEFAULT) {
 
@@ -90,8 +90,8 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
     }
 
     fun getKnots(segment: Int) : Pair<V, V> {
-        if (segment < 0) throw IndexOutOfBoundsException(segment)
-        if ((this.closed && segment > this.knots.size) || (!this.closed && segment > this.knots.lastIndex)) throw IndexOutOfBoundsException(segment)
+        if (segment < 0) throw SegmentIndexOutOfBoundsException(segment)
+        if ((this.closed && segment > this.knots.size) || (!this.closed && segment > this.knots.lastIndex)) throw SegmentIndexOutOfBoundsException(segment)
 
         val first = this.knots[segment]
         val seconds = if (this.closed && segment == this.knots.lastIndex) this.knots[0] else this.knots[segment + 1]
@@ -104,7 +104,7 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
                 throw IllegalStateException("The control points have not been computed yet.")
             }
 
-            throw IndexOutOfBoundsException(segment)
+            throw SegmentIndexOutOfBoundsException(segment)
         }
 
         return this.controlPoints[segment]
