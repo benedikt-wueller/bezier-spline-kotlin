@@ -6,7 +6,13 @@ A generic cubic bezier spline implementation for Java/Kotlin.
 Installation
 ------------
 
-TODO
+```xml
+<dependency>
+  <groupId>dev.benedikt.math</groupId>
+  <artifactId>bezier-spline</artifactId>
+  <version>1.0</version>
+</dependency>
+```
 
 Usage
 -----
