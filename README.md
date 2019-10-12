@@ -9,8 +9,7 @@ Getting Started
 Check out the [BezierSpline](https://github.com/Bw2801/bezier-spline-kotlin/wiki/BezierSpline) documentation for further customization options.
 
 You can create open or closed bezier splines for any amount of dimensions using the provided `FloatBezierSpline`,
-`DoubleBezierSpline` and `Vector` implementations. You may also create a custom bezier spline implementation (see
-the wiki).
+`DoubleBezierSpline` and `Vector` implementations. You may also create a custom bezier spline implementation (check out the wiki).
 
 ```java
 BezierSpline<Double, Vector3D> spline = new DoubleBezierSpline<>(true); // true = closed
