@@ -23,8 +23,6 @@ Vector3D coordinates = spline.getCoordinatesAt(0.5);
 Vector3D tangent = spline.getTangentAt(0.5);
 ```
 
-### Manual Updates
-
 The required and _potentially_ heavy length estimation happens every time a knot is added or removed.
 You may want to reduce the workload by updating the spline manually.
 
