@@ -3,10 +3,15 @@ bezier-spline-kotlin
 
 A generic cubic bezier spline implementation for Java/Kotlin.
 
-Getting Started
----------------
+Installation
+------------
 
-Check out the [BezierSpline](https://github.com/Bw2801/bezier-spline-kotlin/wiki/BezierSpline) documentation for further customization options.
+TODO
+
+Usage
+-----
+
+**Note**: Check out the [BezierSpline](https://github.com/Bw2801/bezier-spline-kotlin/wiki/BezierSpline) documentation for further options.
 
 You can create open or closed bezier splines for any amount of dimensions using the provided `FloatBezierSpline`,
 `DoubleBezierSpline` and `Vector` implementations. You may also create a custom bezier spline implementation.
