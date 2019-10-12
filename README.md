@@ -30,7 +30,7 @@ spline.addKnot(new Vector3D(0.7, 0.24, 0.5));
 spline.addKnot(new Vector3D(0.6, 0.1, 0.35));
 spline.addKnot(new Vector3D(0.33, 0.39, 0.4));
 
-Double length = spline.getLength();
+double length = spline.getLength();
 Vector3D coordinates = spline.getCoordinatesAt(0.5);
 Vector3D tangent = spline.getTangentAt(0.5);
 ```
