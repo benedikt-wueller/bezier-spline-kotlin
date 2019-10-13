@@ -3,6 +3,8 @@ bezier-spline-kotlin
 
 A generic cubic bezier spline implementation for Java/Kotlin.
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/dev.benedikt.math/bezier-spline/badge.svg)](https://maven-badges.herokuapp.com/maven-central/dev.benedikt.math/bezier-spline)
+
 Installation
 ------------
 
