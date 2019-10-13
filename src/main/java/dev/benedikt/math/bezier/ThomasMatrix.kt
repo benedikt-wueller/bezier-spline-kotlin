@@ -1,12 +1,12 @@
 package dev.benedikt.math.bezier
 
-import dev.benedikt.math.bezier.math.NumberHelper
+import dev.benedikt.math.bezier.math.MathHelper
 import dev.benedikt.math.bezier.vector.Vector
 
 /**
  * A Matrix using the Thomas algorithm to calculate the control points of the individual bezier curves creating the bezier spline.
  */
-class ThomasMatrix<N : Number, V : Vector<N, V>>(private val helper: NumberHelper<N>) {
+class ThomasMatrix<N : Number, V : Vector<N, V>>(private val math: MathHelper<N>) {
 
     private val a = mutableListOf<N>()
     private val b = mutableListOf<N>()
@@ -25,8 +25,8 @@ class ThomasMatrix<N : Number, V : Vector<N, V>>(private val helper: NumberHelpe
         val r = this.r.toMutableList()
 
         for (i in 1 until r.size) {
-            val m = this.div(this.a[i], b[i - 1])
-            b[i] = this.minus(b[i], this.times(this.c[i - 1], m))
+            val m = this.math.div(this.a[i], b[i - 1])
+            b[i] = this.math.minus(b[i], this.math.times(this.c[i - 1], m))
             r[i] = r[i] - r[i - 1] * m
         }
 
@@ -53,31 +53,31 @@ class ThomasMatrix<N : Number, V : Vector<N, V>>(private val helper: NumberHelpe
         var lastRow = c[c.lastIndex]
 
         for (i in 0 until size - 1) {
-            var m = this.div(a[i + 1], b[i])
-            b[i + 1] = this.minus(b[i + 1], this.times(c[i], m))
+            var m = this.math.div(a[i + 1], b[i])
+            b[i + 1] = this.math.minus(b[i + 1], this.math.times(c[i], m))
             r[i + 1] = r[i + 1] - r[i] * m
 
             if (i > size - 3) continue
 
             if (i < size - 3) {
-                lastColumn.add(this.times(lastColumn[i], this.negate(m)))
+                lastColumn.add(this.math.times(lastColumn[i], this.math.negate(m)))
             } else { // i = n-3
-                c[i + 1] = this.minus(c[i + 1], this.times(lastColumn[i], m))
+                c[i + 1] = this.math.minus(c[i + 1], this.math.times(lastColumn[i], m))
             }
 
-            m = this.div(lastRow, b[i])
-            b[b.lastIndex] = this.minus(b[b.lastIndex], this.times(lastColumn[i], m))
+            m = this.math.div(lastRow, b[i])
+            b[b.lastIndex] = this.math.minus(b[b.lastIndex], this.math.times(lastColumn[i], m))
 
             if (i < size - 3) {
-                lastRow = this.times(c[i], this.negate(m))
+                lastRow = this.math.times(c[i], this.math.negate(m))
             } else { // i = n-3
-                a[a.lastIndex] = this.minus(a[a.lastIndex], this.times(c[i], m))
+                a[a.lastIndex] = this.math.minus(a[a.lastIndex], this.math.times(c[i], m))
             }
 
             r[r.lastIndex] -= r[i] * m
         }
 
-        lastColumn.add(this.helper.zero)
+        lastColumn.add(this.math.zero)
 
         val result = mutableListOf<V>()
         result.add(r.last() / b.last())
@@ -89,13 +89,4 @@ class ThomasMatrix<N : Number, V : Vector<N, V>>(private val helper: NumberHelpe
 
         return result.reversed()
     }
-
-    //
-    // Math helpers for readability
-    //
-
-    private fun minus(a: N, b: N) = this.helper.minus(a, b)
-    private fun times(a: N, b: N) = this.helper.times(a, b)
-    private fun div(a: N, b: N) = this.helper.div(a, b)
-    private fun negate(n: N) = this.helper.negate(n)
 }

@@ -1,9 +1,8 @@
 package dev.benedikt.math.bezier.math
 
 import kotlin.math.pow
-import kotlin.math.roundToInt
 
-class DoubleNumberHelper : NumberHelper<Double>() {
+class DoubleMathHelper : MathHelper<Double>() {
 
     override val zero: Double get() = 0.0
     override val one: Double get() = 1.0

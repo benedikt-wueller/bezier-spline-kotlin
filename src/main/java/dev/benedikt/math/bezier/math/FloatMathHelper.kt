@@ -1,9 +1,8 @@
 package dev.benedikt.math.bezier.math
 
 import kotlin.math.pow
-import kotlin.math.roundToInt
 
-class FloatNumberHelper : NumberHelper<Float>() {
+class FloatMathHelper : MathHelper<Float>() {
 
     override val zero: Float get() = 0.0f
     override val one: Float get() = 1.0f

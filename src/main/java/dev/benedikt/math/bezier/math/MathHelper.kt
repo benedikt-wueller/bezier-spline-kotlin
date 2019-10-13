@@ -3,13 +3,14 @@ package dev.benedikt.math.bezier.math
 /**
  * A helper class to allow for generic maths in the bezier splines and thomas matrices.
  */
-abstract class NumberHelper<N : Number> {
+abstract class MathHelper<N : Number> {
 
     abstract val zero: N
     abstract val one: N
 
     @Suppress("LeakingThis") val two = this.plus(this.one, this.one)
     @Suppress("LeakingThis") val three = this.plus(this.two, this.one)
+    @Suppress("LeakingThis") val six = this.plus(this.three, this.three)
 
     abstract fun plus(a: N, b: N) : N
     abstract fun minus(a: N, b: N) : N
@@ -23,4 +24,6 @@ abstract class NumberHelper<N : Number> {
 
     abstract fun isBetween(n: N, a: N, b: N) : Boolean
     abstract fun negate(n: N) : N
+
+    fun square(n: N) = this.pow(n, this.two)
 }
