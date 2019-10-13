@@ -1,130 +1,114 @@
 package dev.benedikt.math.bezier.spline
 
 import dev.benedikt.math.bezier.Resolution
-import dev.benedikt.math.bezier.SegmentIndexOutOfBoundsException
 import dev.benedikt.math.bezier.ThomasMatrix
 import dev.benedikt.math.bezier.math.NumberHelper
 import dev.benedikt.math.bezier.vector.Vector
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 
-abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = false, val resolution: Int = Resolution.DEFAULT) {
+abstract class BezierSpline<N : Number, V : Vector<N, V>>(val isClosed: Boolean = false, val resolution: Int = Resolution.DEFAULT) {
 
     protected abstract val numberHelper: NumberHelper<N>
     protected abstract val minWeight: N
 
     private val knots = mutableListOf<V>()
-    private var controlPoints = listOf<Pair<V, V>>()
-    private var segmentLengths = listOf<N>()
+    private val segments = mutableListOf<CubicBezierCurve<N, V>>()
+    private var computedLength: N? = null
 
-    @Suppress("LeakingThis") var length: N? = null; private set
+    val length: N get() {
+        if (this.isDirty) this.compute()
+        return this.computedLength!!
+    }
+
+    val segmentCount: Int get() = if (this.isClosed) this.knots.size + 1 else this.knots.size
 
     val isComputable: Boolean get() = this.knots.size >= 2
-    val isComputed: Boolean get() = this.length != null
+    var isDirty: Boolean = false; private set
 
-    @JvmOverloads
-    fun addKnot(knot: V, update: Boolean = true) {
+    fun addKnot(knot: V) {
         this.knots.add(knot)
-        if (update) this.update()
+        this.isDirty = false
     }
 
-    @JvmOverloads
-    fun addKnots(knots: Iterable<V>, update: Boolean = true) {
+    fun addKnots(knots: Iterable<V>) {
         this.knots.addAll(knots)
-        if (update) this.update()
+        this.isDirty = false
     }
 
-    @JvmOverloads
-    fun removeKnot(knot: V, update: Boolean = true) {
+    fun removeKnot(knot: V) {
         this.knots.remove(knot)
-        if (update) this.update()
+        this.isDirty = false
     }
 
-    @JvmOverloads
-    fun removeKnots(knots: Iterable<V>, update: Boolean = true) {
+    fun removeKnots(knots: Iterable<V>) {
         this.knots.removeAll(knots)
-        if (update) this.update()
+        this.isDirty = false
     }
 
-    fun update() : Boolean {
-        // We need at least two nodes for a path to be generated.
-        if (!this.isComputable) {
-            this.resetComputed()
-            return false
-        }
+    fun getSegment(index: Int) : CubicBezierCurve<N, V> {
+        if (this.isDirty) this.compute()
+        return this.segments[index]
+    }
 
-        val weights = this.computeWeights()
-        this.controlPoints = this.computeControlPoints(weights)
+    fun getKnots(segmentIndex: Int) : Pair<V, V> {
+        val segment = this.getSegment(segmentIndex)
+        return Pair(segment.from, segment.to)
+    }
 
-        // Calculate curve segment and spline lengths.
-        var length = this.zero
-        val segmentLengths = mutableListOf<N>()
-
-        for (i in 0 until this.controlPoints.size) {
-            val segmentLength = this.computeSegmentLength(i)
-            segmentLengths.add(segmentLength)
-            length = this.plus(length, segmentLength)
-        }
-
-        this.length = length
-        this.segmentLengths = segmentLengths
-        return true
+    fun getControlPoints(segmentIndex: Int) : Pair<V, V> {
+        return this.getSegment(segmentIndex).controlPoints
     }
 
     fun getCoordinatesAt(t: N) : V {
-        if (!this.isComputed) {
-            throw IllegalStateException("The spline's length has not been estimated yet.")
-        }
-
+        if (this.isDirty) this.compute()
         val (segment, value) = this.getMappedSegment(t)
-        return this.getCoordinatesAt(segment, value)
+        return segment.getCoordinatesAt(value)
     }
 
     fun getTangentAt(t: N) : V {
-        if (!this.isComputed) {
-            throw IllegalStateException("The spline's length has not been estimated yet.")
-        }
-
+        if (this.isDirty) this.compute()
         val (segment, value) = this.getMappedSegment(t)
-        return this.getTangentAt(segment, value)
+        return segment.getTangentAt(value)
     }
 
-    fun getKnots(segment: Int) : Pair<V, V> {
-        if (segment < 0) throw SegmentIndexOutOfBoundsException(segment)
-        if ((this.closed && segment > this.knots.size) || (!this.closed && segment > this.knots.lastIndex)) throw SegmentIndexOutOfBoundsException(segment)
+    fun compute() {
+        if (!this.isDirty) return
+        if (!this.isComputable) throw IllegalStateException("The bezier spline requires at least 2 knots.")
 
-        val first = this.knots[segment]
-        val seconds = if (this.closed && segment == this.knots.lastIndex) this.knots[0] else this.knots[segment + 1]
-        return Pair(first, seconds)
-    }
+        val weights = this.computeWeights()
+        val controlPoints = this.computeControlPoints(weights)
 
-    fun getControlPoints(segment: Int) : Pair<V, V> {
-        if (segment < 0 || segment > this.controlPoints.lastIndex) {
-            if (segment >= 0 && !this.isComputed) {
-                throw IllegalStateException("The control points have not been computed yet.")
-            }
-
-            throw SegmentIndexOutOfBoundsException(segment)
+        this.segments.clear()
+        for (segment in 0 until this.segmentCount) {
+            val knots = this.getKnots(segment)
+            this.segments.add(CubicBezierCurve(knots.first, knots.second, controlPoints[segment], this.resolution, this.numberHelper))
         }
 
-        return this.controlPoints[segment]
+        // Estimates curve segment and spline lengths.
+        var length = this.zero
+        this.segments.forEach { length = this.plus(length, it.length) }
+        this.computedLength = length
     }
 
-    private fun getMappedSegment(t: N) : Pair<Int, N> {
+    private fun getMappedSegment(t: N) : Pair<CubicBezierCurve<N, V>, N> {
+        if (!this.isDirty) this.compute()
+
         if (!this.isBetween(t, this.zero, this.one)) {
             throw IllegalArgumentException("The factor t has to be a value between 0 and 1.")
         }
 
         // Find the segment.
-        val targetLength = this.times(this.length!!, t)
+        val targetLength = this.times(this.length, t)
         var currentLength = this.zero
 
-        for (i in 0 until this.segmentLengths.size) {
-            val length = this.segmentLengths[i]
+        for (i in 0 until this.segmentCount) {
+            val segment = this.getSegment(i)
+            val length = segment.length
             val total = this.plus(currentLength, length)
 
             if (this.isBetween(targetLength, currentLength, total)) {
-                return Pair(i, this.div(this.minus(targetLength, currentLength), length))
+                return Pair(segment, this.div(this.minus(targetLength, currentLength), length))
             }
 
             currentLength = total
@@ -132,58 +116,6 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
 
         // As far as I am concerned, this code is logically unreachable.
         throw IllegalStateException("Unable to calculate the corresponding spline segment.")
-    }
-
-    private fun getCoordinatesAt(segment: Int, t: N) : V {
-        // See https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves
-
-        val (p0, p3) = this.getKnots(segment)
-        val (p1, p2) = this.getControlPoints(segment)
-
-        val mt = this.minus(this.one, t)
-        val mt2 = this.square(mt)
-        val mt3 = this.pow(mt, this.three)
-
-        val t2 = this.square(t)
-        val t3 = this.pow(t, this.three)
-
-        return (p0 * mt3) + (p1 * this.three * mt2 * t) + (p2 * this.three * mt * t2) + (p3 * t3)
-    }
-
-    private fun getTangentAt(segment: Int, t: N) : V {
-        // See https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves
-
-        val (p0, p3) = this.getKnots(segment)
-        val (p1, p2) = this.getControlPoints(segment)
-
-        val mt = this.minus(this.one, t)
-        val mt2 = this.square(mt)
-
-        val t2 = this.square(t)
-
-        return (((p1 - p0) * this.three * mt2) + ((p2 - p1) * t * this.six * mt) + ((p3 - p2) * this.three * t2)).normalized()
-    }
-
-    private fun resetComputed() {
-        this.controlPoints = listOf()
-        this.segmentLengths = listOf()
-        this.length = this.zero
-    }
-
-    private fun computeSegmentLength(segment: Int) : N {
-        val fraction = this.div(this.one, this.resolution)
-
-        var length = this.zero
-        var lastCoordinates = this.knots[segment]
-
-        for (i in 1..this.resolution) {
-            val coordinates = this.getCoordinatesAt(segment, this.times(fraction, i))
-            val sectionLength = lastCoordinates.distanceTo(coordinates)
-            lastCoordinates = coordinates
-            length = this.plus(length, sectionLength)
-        }
-
-        return length
     }
 
     private fun computeWeights() : List<N> {
@@ -195,8 +127,8 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
             weights.add(this.max(distance, this.minWeight))
         }
 
-        // If the spline is closed, we need an additional weight between the first and last knot.
-        if (this.closed) {
+        // If the spline is isClosed, we need an additional weight between the first and last knot.
+        if (this.isClosed) {
             val distance = this.knots.first().distanceTo(this.knots.last())
             weights.add(this.max(distance, this.minWeight))
         }
@@ -209,7 +141,7 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
 
         val matrix = ThomasMatrix<N, V>(this.numberHelper)
 
-        if (this.closed) {
+        if (this.isClosed) {
             for (i in 0 until this.knots.size) { // 1 to knots.size inclusive
                 val weight = weights[i]
                 val nextWeight = if (i == this.knots.lastIndex) weights.first() else weights[i + 1]
@@ -245,7 +177,8 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
         weights.add(weights.last())
 
         // First segment
-        matrix.set(this.zero, this.two, this.div(weights[0], weights[1]), this.knots[0] + this.knots[1] * this.plus(this.one, this.div(weights[0], weights[1])))
+        matrix.set(this.zero, this.two, this.div(weights[0], weights[1]),
+                this.knots[0] + this.knots[1] * this.plus(this.one, this.div(weights[0], weights[1])))
 
         // Central segments
         for (i in 1 until this.knots.lastIndex) {
@@ -258,7 +191,8 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
             val a = this.square(weight)
             val b = this.times(this.two, this.times(prevWeight, this.plus(prevWeight, weight)))
             val c = this.times(this.square(prevWeight), fraction)
-            val r = this.knots[i] * this.square(this.plus(prevWeight, weight)) + this.knots[i + 1] * this.square(prevWeight) * this.plus(this.one, fraction)
+            val r = this.knots[i] * this.square(this.plus(prevWeight, weight)) +
+                    this.knots[i + 1] * this.square(prevWeight) * this.plus(this.one, fraction)
 
             matrix.set(a, b, c, r)
         }
@@ -289,12 +223,9 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val closed: Boolean = 
     private fun plus(a: N, b: N) = this.numberHelper.plus(a, b)
     private fun minus(a: N, b: N) = this.numberHelper.minus(a, b)
     private fun times(a: N, b: N) = this.numberHelper.times(a, b)
-    private fun times(a: N, b: Int) = this.numberHelper.times(a, b)
     private fun div(a: N, b: N) = this.numberHelper.div(a, b)
-    private fun div(a: N, b: Int) = this.numberHelper.div(a, b)
 
     private fun square(n: N) = this.numberHelper.pow(n, this.numberHelper.two)
-    private fun pow(n: N, p: N) = this.numberHelper.pow(n, p)
     private fun max(a: N, b: N) = this.numberHelper.max(a, b)
 
     private fun isBetween(n: N, a: N, b: N) = this.numberHelper.isBetween(n, a, b)

@@ -1,9 +1,8 @@
 package dev.benedikt.math.bezier.vector
 
 /**
- * Generic interface to allow variable dimensions and generic number types for use in bezier splines. The bezier spline
- * is designed to work with immutable Vectors. There should be no way in which the values can be modified after
- * creation.
+ * Generic interface to allow variable dimensions and generic number types for use in bezier splines. The bezier spline is designed to work with
+ * immutable Vectors. There should be no way in which the values can be modified after creation.
  */
 interface Vector<N : Number, V : Vector<N, V>> {
 
