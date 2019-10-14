@@ -25,22 +25,22 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val isClosed: Boolean,
 
     fun addKnot(knot: V) {
         this.knots.add(knot)
-        this.isDirty = false
+        this.isDirty = true
     }
 
     fun addKnots(knots: Iterable<V>) {
         this.knots.addAll(knots)
-        this.isDirty = false
+        this.isDirty = true
     }
 
     fun removeKnot(knot: V) {
         this.knots.remove(knot)
-        this.isDirty = false
+        this.isDirty = true
     }
 
     fun removeKnots(knots: Iterable<V>) {
         this.knots.removeAll(knots)
-        this.isDirty = false
+        this.isDirty = true
     }
 
     fun getSegment(index: Int) : CubicBezierCurve<N, V> {
@@ -70,9 +70,10 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val isClosed: Boolean,
     }
 
     fun compute() {
-        if (!this.isDirty) return
         if (!this.isComputable) throw IllegalStateException("The bezier spline requires at least 2 knots.")
-
+        if (!this.isDirty) return
+        this.isDirty = false
+      
         val weights = this.computeWeights()
         val controlPoints = this.computeControlPoints(weights)
 
