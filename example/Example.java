@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 public class Example {
 
     public static void main(String[] args) {
-        DoubleBezierSpline<Vector2D> spline = new DoubleBezierSpline<>(true);
+        DoubleBezierSpline<Vector2D> spline = new DoubleBezierSpline<>(false);
 
         spline.addKnots(
                 new Vector2D(60, 60),
