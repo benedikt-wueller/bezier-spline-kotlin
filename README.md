@@ -40,20 +40,17 @@ Vector3D tangent = spline.getTangentAt(0.5);
 ```
 
 The required and potentially heavy length estimation happens the first time lengths, coordinates, tangents or control points are queried. You can
-manually update the spline to move the workload.
+manually update the spline to move the workload. By default, the performance impact is negligible in most cases.
 
 ```java
 spline.compute(); // calculations happen here.
 
 // ...
 
-double length = spline.getComputedLength(); // without performance impact
+double length = spline.getLength(); // without performance impact
 Vector3D coordinates = spline.getCoordinatesAt(0.5);
 Vector3D tangent = spline.getTangentAt(0.5);
 ```
-
-**Note**: In one way or another an update has to be triggered in order to be able to receive coordinates, tangents or
-control points.
 
 
 Bezier Curve
@@ -65,4 +62,17 @@ BezierCurve<Double, Vector2D> curve = new DoubleBezierCurve(Order.CUBIC, from, t
 double length = curve.getLength();
 Vector2D coordinates = curve.getCoordinatesAt(0.5);
 Vector2D tangent = curve.getTangentAt(0.5);
+```
+
+The required and potentially heavy length estimation happens the first time the length is queried. You can manually update the spline to move the
+workload. By default, the performance impact is negligible in most cases.
+
+```java
+curve.compute(); // calculations happen here.
+
+// ...
+
+double length = curve.getLength(); // without performance impact
+Vector3D coordinates = curve.getCoordinatesAt(0.5);
+Vector3D tangent = curve.getTangentAt(0.5);
 ```
