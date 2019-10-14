@@ -29,10 +29,12 @@ You can create open or closed bezier splines for any amount of dimensions using 
 ```java
 BezierSpline<Double, Vector3D> spline = new DoubleBezierSpline<>(true);
 
-spline.addKnot(new Vector3D(0.06, 0.06, 0.06));
-spline.addKnot(new Vector3D(0.7, 0.24, 0.5));
-spline.addKnot(new Vector3D(0.6, 0.1, 0.35));
-spline.addKnot(new Vector3D(0.33, 0.39, 0.4));
+spline.addKnots(
+        new Vector3D(0.06, 0.06, 0.06),
+        new Vector3D(0.7, 0.24, 0.5),
+        new Vector3D(0.6, 0.1, 0.35),
+        new Vector3D(0.33, 0.39, 0.4)
+);
 
 double length = spline.getComputedLength();
 Vector3D coordinates = spline.getCoordinatesAt(0.5);
