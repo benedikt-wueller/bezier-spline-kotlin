@@ -21,7 +21,7 @@ open class BezierCurve<N : Number, V : Vector<N, V>>(val order: Order, val from:
     }
 
     init {
-        if (this.controlPoints.size == this.order.controlPoints) {
+        if (this.controlPoints.size != this.order.controlPoints) {
             throw IllegalArgumentException("The bezier curve of order ${order.name} expects exactly ${order.controlPoints} control points.")
         }
 

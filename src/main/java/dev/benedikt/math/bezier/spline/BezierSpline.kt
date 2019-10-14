@@ -15,7 +15,7 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val isClosed: Boolean,
     private val knots = mutableListOf<V>()
     private val segments = mutableListOf<BezierCurve<N, V>>()
 
-    val segmentCount: Int get() = if (this.isClosed) this.knots.size + 1 else this.knots.size
+    val segmentCount: Int get() = if (this.isClosed) this.knots.size else this.knots.size - 1
 
     val isComputable: Boolean get() = this.knots.size >= 2
     var isDirty: Boolean = false; private set
@@ -68,8 +68,10 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val isClosed: Boolean,
 
         this.segments.clear()
         for (segment in 0 until this.segmentCount) {
-            val knots = this.getKnots(segment)
-            this.segments.add(BezierCurve(Order.CUBIC, knots.first, knots.second, controlPoints[segment].toList(), this.resolution, this.mathHelper))
+            val firstKnot = this.knots[segment]
+            val nextKnot = if (this.isClosed && segment == this.knots.lastIndex) this.knots.first() else this.knots[segment + 1]
+
+            this.segments.add(BezierCurve(Order.CUBIC, firstKnot, nextKnot, controlPoints[segment].toList(), this.resolution, this.mathHelper))
         }
     }
 
@@ -97,7 +99,7 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val isClosed: Boolean,
         val matrix = ThomasMatrix<N, V>(this.mathHelper)
 
         if (this.isClosed) {
-            for (i in 0 until this.knots.size) { // 1 to knots.size inclusive
+            for (i in 0 until this.knots.size) {
                 val weight = weights[i]
                 val nextWeight = if (i == this.knots.lastIndex) weights.first() else weights[i + 1]
                 val prevWeight = if (i == 0) weights.last() else weights[i - 1]
@@ -149,7 +151,7 @@ abstract class BezierSpline<N : Number, V : Vector<N, V>>(val isClosed: Boolean,
 
         return (0 until this.segmentCount).map { i ->
             val nextKnot = if (i == this.knots.lastIndex) this.knots.first() else this.knots[i + 1]
-            val nextWeight = if (i == this.knots.lastIndex) weights.first() else weights[i + 1]
+            val nextWeight = if (i == weights.lastIndex) weights.first() else weights[i + 1]
 
             val fraction = weights[i] / nextWeight
             val p2 = nextKnot * (this.one + fraction) - controlPoints[i + 1] * fraction
