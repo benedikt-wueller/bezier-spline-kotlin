@@ -16,7 +16,7 @@ open class BezierCurve<N : Number, V : Vector<N, V>>(val order: Order, val from:
     private var computedLength: N? = null
 
     val length: N get() {
-        if (this.computedLength == null) this.compute()
+        if (this.computedLength == null) this.computeLength()
         return this.computedLength!!
     }
 
@@ -58,7 +58,7 @@ open class BezierCurve<N : Number, V : Vector<N, V>>(val order: Order, val from:
         return result!!
     }
 
-    fun compute() {
+    fun computeLength() {
         val fraction = this.one / this.resolution
 
         var length = this.zero

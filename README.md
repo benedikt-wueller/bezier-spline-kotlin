@@ -68,7 +68,7 @@ The required and potentially heavy length estimation happens the first time the 
 workload. By default, the performance impact is negligible in most cases.
 
 ```java
-curve.compute(); // calculations happen here.
+curve.computeLength(); // calculations happen here.
 
 // ...
 
