@@ -7,7 +7,7 @@ import java.lang.IllegalArgumentException
 
 // See https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves
 
-class BezierCurve<N : Number, V : Vector<N, V>>(val order: Order, val from: V, val to: V, val controlPoints: Collection<V>,
+open class BezierCurve<N : Number, V : Vector<N, V>>(val order: Order, val from: V, val to: V, val controlPoints: Collection<V>,
                                                 val resolution: Int, helper: MathHelper<N>) : MathComponent<N>(helper) {
 
     val knots = this.from to this.to

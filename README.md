@@ -5,6 +5,8 @@ A generic multi-order bezier curve and cubic bezier spline implementation for Ja
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/dev.benedikt.math/bezier-spline/badge.svg)](https://maven-badges.herokuapp.com/maven-central/dev.benedikt.math/bezier-spline)
 
+Check the release page for the latest stable version.
+
 Installation
 ------------
 
@@ -12,12 +14,12 @@ Installation
 <dependency>
   <groupId>dev.benedikt.math</groupId>
   <artifactId>bezier-spline</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
 </dependency>
 ```
 
-Usage
------
+Bezier Spline
+-------------
 
 **Note**: Check out the [BezierSpline](https://github.com/Bw2801/bezier-spline-kotlin/wiki/BezierSpline) documentation for further options.
 
@@ -41,13 +43,6 @@ The required and potentially heavy length estimation happens the first time leng
 manually update the spline to move the workload.
 
 ```java
-spline.addKnot(new Vector3D(0.06, 0.06, 0.06));
-spline.addKnot(new Vector3D(0.7, 0.24, 0.5));
-spline.addKnot(new Vector3D(0.6, 0.1, 0.35));
-spline.addKnot(new Vector3D(0.33, 0.39, 0.4));
-
-// ...
-
 spline.compute(); // calculations happen here.
 
 // ...
@@ -59,3 +54,15 @@ Vector3D tangent = spline.getTangentAt(0.5);
 
 **Note**: In one way or another an update has to be triggered in order to be able to receive coordinates, tangents or
 control points.
+
+
+Bezier Curve
+------------
+
+```java
+BezierCurve<Double, Vector2D> curve = new DoubleBezierCurve(Order.CUBIC, from, to, controlPoints);
+
+double length = curve.getLength();
+Vector2D coordinates = curve.getCoordinatesAt(0.5);
+Vector2D tangent = curve.getTangentAt(0.5);
+```
