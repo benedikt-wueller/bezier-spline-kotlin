@@ -16,7 +16,7 @@ class FloatMathHelper : MathHelper<Float>() {
 
     override fun max(a: Float, b: Float) = kotlin.math.max(a, b)
     override fun pow(n: Float, p: Float) = n.pow(p)
+    override fun pow(n: Float, p: Int) = n.pow(p)
 
     override fun isBetween(n: Float, a: Float, b: Float) = n in a..b
-    override fun negate(n: Float) = -n
 }

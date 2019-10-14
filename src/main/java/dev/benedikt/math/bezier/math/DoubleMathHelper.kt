@@ -16,7 +16,7 @@ class DoubleMathHelper : MathHelper<Double>() {
 
     override fun max(a: Double, b: Double) = kotlin.math.max(a, b)
     override fun pow(n: Double, p: Double) = n.pow(p)
+    override fun pow(n: Double, p: Int) = n.pow(p)
 
     override fun isBetween(n: Double, a: Double, b: Double) = n in a..b
-    override fun negate(n: Double) = -n
 }
