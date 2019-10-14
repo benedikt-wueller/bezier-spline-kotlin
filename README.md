@@ -73,6 +73,6 @@ curve.computeLength(); // calculations happen here.
 // ...
 
 double length = curve.getLength(); // without performance impact
-Vector3D coordinates = curve.getCoordinatesAt(0.5);
-Vector3D tangent = curve.getTangentAt(0.5);
+Vector2D coordinates = curve.getCoordinatesAt(0.5);
+Vector2D tangent = curve.getTangentAt(0.5);
 ```
