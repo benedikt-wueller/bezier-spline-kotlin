@@ -5,8 +5,6 @@ A generic multi-order bezier curve and cubic bezier spline implementation for Ja
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/dev.benedikt.math/bezier-spline/badge.svg)](https://maven-badges.herokuapp.com/maven-central/dev.benedikt.math/bezier-spline)
 
-Check the release page for the latest stable version.
-
 Installation
 ------------
 
@@ -36,13 +34,12 @@ spline.addKnots(
         new Vector3D(0.33, 0.39, 0.4)
 );
 
-double length = spline.getComputedLength();
+double length = spline.getLength();
 Vector3D coordinates = spline.getCoordinatesAt(0.5);
 Vector3D tangent = spline.getTangentAt(0.5);
 ```
 
-The required and potentially heavy length estimation happens the first time lengths, coordinates, tangents or control points are queried. You can
-manually update the spline to move the workload. By default, the performance impact is negligible in most cases.
+The required length estimation happens the first time lengths, coordinates, tangents or control points are queried. You can manually update the spline to move the workload. By default, the performance impact is negligible in most cases.
 
 ```java
 spline.compute(); // calculations happen here.
@@ -66,8 +63,7 @@ Vector2D coordinates = curve.getCoordinatesAt(0.5);
 Vector2D tangent = curve.getTangentAt(0.5);
 ```
 
-The required and potentially heavy length estimation happens the first time the length is queried. You can manually update the spline to move the
-workload. By default, the performance impact is negligible in most cases.
+The required length estimation happens the first time the length is queried. You can manually update the curve to move the workload. By default, the performance impact is negligible in most cases.
 
 ```java
 curve.computeLength(); // calculations happen here.
