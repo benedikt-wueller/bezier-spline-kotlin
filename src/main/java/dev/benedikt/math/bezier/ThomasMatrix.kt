@@ -39,9 +39,9 @@ class ThomasMatrix<N : Number, V : Vector<N, V>>(helper: MathHelper<N>) : MathCo
             r[i] = r[i] - r[i - 1] * m
 
             if (!closed) continue
-            if (i > size - 3) break
+            if (i > size - 2) break
 
-            if (i < size - 3) {
+            if (i < size - 2) {
                 lastColumn.add(lastColumn[i - 1] * -m)
             } else { // i = n-3
                 c[i] = c[i] - lastColumn[i - 1] * m
@@ -50,7 +50,7 @@ class ThomasMatrix<N : Number, V : Vector<N, V>>(helper: MathHelper<N>) : MathCo
             m = lastRow / b[i - 1]
             b[b.lastIndex] = b[b.lastIndex] - lastColumn[i - 1] * m
 
-            if (i < size - 3) {
+            if (i < size - 2) {
                 lastRow = c[i - 1] * -m
             } else { // i = n-3
                 a[a.lastIndex] = a[a.lastIndex] - c[i - 1] * m
@@ -59,7 +59,7 @@ class ThomasMatrix<N : Number, V : Vector<N, V>>(helper: MathHelper<N>) : MathCo
             r[r.lastIndex] -= r[i - 1] * m
         }
 
-        if (closed) lastColumn.add(this.zero)
+        lastColumn.add(this.zero)
 
         val result = mutableListOf<V>()
         result.add(r.last() / b.last())
