@@ -21,7 +21,7 @@ class BezierCurve<N : Number, V : Vector<N, V>>(val order: Order, val from: V, v
             throw IllegalArgumentException("The bezier curve of order ${order.name} expects exactly ${order.controlPoints} control points.")
         }
 
-        if (this.order.degree < Order.LINEAR.degree) {
+        if (this.order.degree < Order.LINEAR.degree || this.order.previous == null) {
             throw IllegalArgumentException("The bezier curve expects a minimum order of ${Order.LINEAR.name}.")
         }
 
