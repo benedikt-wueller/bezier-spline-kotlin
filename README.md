@@ -14,7 +14,7 @@ Installation
 <dependency>
   <groupId>dev.benedikt.math</groupId>
   <artifactId>bezier-spline</artifactId>
-  <version>1.1</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
@@ -27,18 +27,18 @@ You can create open or closed bezier splines for any amount of dimensions using 
 `DoubleBezierSpline` and `Vector` implementations. You may also create a custom bezier spline implementation.
 
 ```java
-BezierSpline<Double, Vector3D> spline = new DoubleBezierSpline<>(true);
+BezierSpline<Double, Vector2D> spline = new DoubleBezierSpline<>(true);
 
 spline.addKnots(
-        new Vector3D(0.06, 0.06, 0.06),
-        new Vector3D(0.7, 0.24, 0.5),
-        new Vector3D(0.6, 0.1, 0.35),
-        new Vector3D(0.33, 0.39, 0.4)
+        new Vector2D(0.06, 0.06),
+        new Vector2D(0.7, 0.24),
+        new Vector2D(0.6, 0.1),
+        new Vector2D(0.33, 0.39)
 );
 
 double length = spline.getLength();
-Vector3D coordinates = spline.getCoordinatesAt(0.5);
-Vector3D tangent = spline.getTangentAt(0.5);
+Vector2D coordinates = spline.getCoordinatesAt(0.5);
+Vector2D tangent = spline.getTangentAt(0.5);
 ```
 
 The required length estimation happens the first time lengths, coordinates, tangents or control points are queried. You can manually update the spline to move the workload. By default, the performance impact is negligible in most cases.
@@ -49,8 +49,8 @@ spline.compute(); // calculations happen here.
 // ...
 
 double length = spline.getLength(); // without performance impact
-Vector3D coordinates = spline.getCoordinatesAt(0.5);
-Vector3D tangent = spline.getTangentAt(0.5);
+Vector2D coordinates = spline.getCoordinatesAt(0.5);
+Vector2D tangent = spline.getTangentAt(0.5);
 ```
 
 
