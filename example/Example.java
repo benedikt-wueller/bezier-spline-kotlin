@@ -25,7 +25,7 @@ public class Example {
         int pixels = 10000;
         int frames = 400;
 
-        File file = new File("/Users/benedikt/custom/bezier-spline/example/result.gif");
+        File file = new File("./example/result.gif");
         try {
             ImageOutputStream output = new FileImageOutputStream(file);
             GifSequenceWriter writer = new GifSequenceWriter(output, BufferedImage.TYPE_3BYTE_BGR, 30, true);
