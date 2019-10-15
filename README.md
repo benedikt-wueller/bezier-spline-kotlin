@@ -7,7 +7,7 @@ A generic multi-order bezier curve and cubic bezier spline implementation for Ja
 
 **Note**: There may be more performant implementations out there. The main focuses lies on being as generic as possible. Nonetheless, if your application is not _highly_ sensitive to performance, this should not result in any issues.
 
-[![Bezier Spline with Tangents](./example/result.gif)](./example)
+[![Bezier Spline with Tangents](./example/result.gif)](./example/Example.java)
 
 Installation
 ------------
