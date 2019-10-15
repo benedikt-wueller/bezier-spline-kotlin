@@ -5,7 +5,7 @@ A generic multi-order bezier curve and cubic bezier spline implementation for Ja
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/dev.benedikt.math/bezier-spline/badge.svg)](https://maven-badges.herokuapp.com/maven-central/dev.benedikt.math/bezier-spline)
 
-![Bezier Spline with Tangents](./example/result.png)
+[![Bezier Spline with Tangents](./example/result.gif)](./example)
 
 Installation
 ------------

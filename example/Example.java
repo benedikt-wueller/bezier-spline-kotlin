@@ -7,11 +7,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
 
 public class Example {
 
     public static void main(String[] args) {
-        DoubleBezierSpline<Vector2D> spline = new DoubleBezierSpline<>(false);
+        DoubleBezierSpline<Vector2D> spline = new DoubleBezierSpline<>(true);
 
         spline.addKnots(
                 new Vector2D(60, 60),
@@ -20,27 +22,41 @@ public class Example {
                 new Vector2D(330, 390)
         );
 
-        BufferedImage image = new BufferedImage(850, 550, BufferedImage.TYPE_4BYTE_ABGR);
-
         int pixels = 10000;
-        int tangents = 35;
+        int frames = 400;
+
+        File file = new File("/Users/benedikt/custom/bezier-spline/example/result.gif");
+        try {
+            ImageOutputStream output = new FileImageOutputStream(file);
+            GifSequenceWriter writer = new GifSequenceWriter(output, BufferedImage.TYPE_3BYTE_BGR, 30, true);
+
+            for (int i = 0; i < frames; i++) {
+                writer.writeToSequence(drawFrame(spline, pixels, 1.0 / frames * i));
+            }
+
+            writer.close();
+            output.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static BufferedImage drawFrame(DoubleBezierSpline<Vector2D> spline, int pixels, double t) {
+        BufferedImage image = new BufferedImage(850, 550, BufferedImage.TYPE_3BYTE_BGR);
+        Graphics2D graphics = image.createGraphics();
+        graphics.setPaint(Color.WHITE);
+        graphics.fillRect( 0, 0, image.getWidth(), image.getHeight());
 
         for (int i = 0; i < pixels; i++) {
             Vector2D coordinates = spline.getCoordinatesAt(1.0 / pixels * i).plus(50);
             drawPixel(image, coordinates, Color.BLACK);
         }
 
-        for (int i = 0; i < tangents; i++) {
-            Vector2D coordinates = spline.getCoordinatesAt(1.0 / tangents * i).plus(50);
-            Vector2D tangent = spline.getTangentAt(1.0 / tangents * i).times(55);
-            drawLine(image, coordinates, tangent, Color.RED);
-        }
+        Vector2D coordinates = spline.getCoordinatesAt(t).plus(50);
+        Vector2D tangent = spline.getTangentAt(t).times(120);
+        drawLine(image, coordinates.minus(tangent.div(2)), tangent, Color.RED);
 
-        try {
-            ImageIO.write(image, "png", new File("./result.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return image;
     }
 
     private static void drawPixel(BufferedImage image, Vector2D coordinates, Color color) {
