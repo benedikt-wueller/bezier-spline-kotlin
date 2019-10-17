@@ -5,7 +5,12 @@ A generic multi-order bezier curve and cubic bezier spline implementation for Ja
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/dev.benedikt.math/bezier-spline/badge.svg)](https://maven-badges.herokuapp.com/maven-central/dev.benedikt.math/bezier-spline)
 
-**Note**: There may be more performant implementations out there. The main focuses lies on being as generic as possible. Nonetheless, if your application is not _highly_ sensitive to performance, this should not result in any issues.
+**Note**
+> The calculation of bezier curve and spline lengths are implemented using estimation of variable resolution,
+> which should be more than sufficient for most applications. Coordinates and tangents are _not_ affected by this. If you
+> require highly accurate measurements, consider using another library. There may be more performant implementations out
+> there. The main focus lies on being as generic as possible. Nonetheless, if your application is not _highly_ sensitive
+> to performance, this should not result in any issues.
 
 [![Bezier Spline with Tangents](./example/result.gif)](./example/Example.java)
 
