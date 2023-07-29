@@ -3,7 +3,7 @@ bezier-spline-kotlin
 
 A generic multi-order bezier curve and cubic bezier spline implementation for Java/Kotlin.
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/dev.benedikt.math/bezier-spline/badge.svg)](https://maven-badges.herokuapp.com/maven-central/dev.benedikt.math/bezier-spline)
+[![Maven Central](https://img.shields.io/badge/maven_central-2.0.0-green)](https://central.sonatype.com/artifact/dev.benedikt.math/bezier-spline)
 
 **Note**
 * The calculation of bezier curve and spline lengths are implemented using estimation of variable resolution, which should be more than sufficient for most applications. Coordinates and tangents are _not_ affected by this. If you require highly accurate measurements, consider using another library.
